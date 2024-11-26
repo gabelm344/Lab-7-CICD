@@ -18,7 +18,7 @@ public class LibraryServiceTests
 
         var book = new Book { Title = "Test Book", Author = "Author", ISBN = "12345" };
 
-        _libraryService.AddBook(user);
+        _libraryService.AddBook(book);
 
         var books = _libraryService.GetBooks();
         Assert.AreEqual(1, books.Count, "Book count should be 1.");
