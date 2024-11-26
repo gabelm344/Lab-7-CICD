@@ -51,14 +51,6 @@ public class LibraryServiceTests
         Assert.AreEqual("Updated Title", books[0].Title, "Book title should be updated.");
         Assert.AreEqual("New Author", books[0].Author, "Book author should be updated.");
     }
-
-        _libraryService.GetBooks().AddRange(books);
-
-        var result = _libraryService.GetBooks();
-
-        Assert.AreEqual(2, result.Count, "Book list should contain 2 books.");
-        Assert.AreEqual("Book 1", result[0].Title, "The first book title should match.");
-    }
     [TestMethod]
     public void TestReadUsers()
     {
