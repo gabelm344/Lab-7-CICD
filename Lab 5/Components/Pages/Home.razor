@@ -1,0 +1,31 @@
+﻿@page "/"
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+<h1>Welcome to the Library Management System</h1>
+
+<p>Manage your library with ease! Use the options below to manage books, users, and borrow or return books.</p>
+
+<h2>Available Actions</h2>
+<ul>
+    <li>Manage Books: Add, edit, list, or delete books in the library.</li>
+    <li>Manage Users: Add, edit, list, or delete users registered in the system.</li>
+    <li>Borrow & Return Books: Allow users to borrow books and manage returns easily.</li>
+</ul>
+
+@code {
+    private void NavigateToBooks()
+    {
+        Navigation.NavigateTo("manage-books");
+    }
+
+    private void NavigateToUsers()
+    {
+        Navigation.NavigateTo("manage-users");
+    }
+
+    private void NavigateToBorrowReturn()
+    {
+        Navigation.NavigateTo("borrow-return");
+    }
+}
+

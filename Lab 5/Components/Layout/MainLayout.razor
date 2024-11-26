@@ -1,0 +1,58 @@
+﻿<!-- 
+    https://chatgpt.com/share/6733b6df-ca6c-8000-aab8-c22d3b21a401 
+    I just used this to help me remember how to HTML because it has 
+    been a while.
+-->
+@inherits LayoutComponentBase
+
+<div class="main-layout">
+    <header>
+        <h1>Library Management System</h1>
+    </header>
+
+    <aside class="nav-menu">
+        <NavMenu />
+    </aside>
+
+    <main>
+        @Body
+    </main>
+
+    <footer>
+        <p>2024 Library Management System</p>
+    </footer>
+</div>
+
+<style>
+    .main-layout {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        grid-template-columns: 200px 1fr;
+        height: 100vh;
+    }
+
+    header {
+        grid-column: 1 / -1;
+        background-color: #333;
+        color: #fff;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .nav-menu {
+        background-color: #f4f4f4;
+        padding: 1rem;
+    }
+
+    main {
+        padding: 1rem;
+    }
+
+    footer {
+        grid-column: 1 / -1;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 0.5rem;
+    }
+</style>

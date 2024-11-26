@@ -1,0 +1,128 @@
+﻿@page "/manage-users"
+@inject ILibraryService LibraryService
+@using Lab_5.Models;
+@rendermode InteractiveServer
+
+<h2>Manage Users</h2>
+
+<h4>Add New User</h4>
+<div>
+    <input @bind="newUser.Name" placeholder="Name" />
+    <input @bind="newUser.Email" placeholder="Email" />
+    <button @onclick="AddUser">Add User</button>
+</div>
+
+<h4>Delete a User by ID</h4>
+<div>
+    <input @bind="userIdToDelete" placeholder="Enter User ID" type="number" />
+    <button @onclick="DeleteUserById">Delete User</button>
+</div>
+
+<!-- Table of Users with Edit Option -->
+<h4>Registered Users</h4>
+@if (users != null && users.Count > 0)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>
+                        @if (isEditing && editingUser.Id == user.Id)
+                        {
+                            <input @bind="editingUser.Name" placeholder="Name" />
+                        }
+                        else
+                        {
+                            @user.Name
+                        }
+                    </td>
+                    <td>
+                        @if (isEditing && editingUser.Id == user.Id)
+                        {
+                            <input @bind="editingUser.Email" placeholder="Email" />
+                        }
+                        else
+                        {
+                            @user.Email
+                        }
+                    </td>
+                    <td>
+                        @if (isEditing && editingUser.Id == user.Id)
+                        {
+                            <button @onclick="SaveUserChanges">Save</button>
+                            <button @onclick="CancelEdit">Cancel</button>
+                        }
+                        else
+                        {
+                            <button @onclick="() => StartEditUser(user)">Edit</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No users registered.</p>
+}
+
+@code {
+    private List<User> users;
+    private User newUser = new User();
+    private User editingUser = new User();
+    private bool isEditing = false;
+    private int userIdToDelete; 
+
+    protected override void OnInitialized()
+    {
+        users = LibraryService.GetUsers();
+    }
+
+    private void AddUser()
+    {
+        LibraryService.AddUser(newUser);
+        users = LibraryService.GetUsers(); 
+        newUser = new User(); 
+    }
+
+    private void StartEditUser(User user)
+    {
+        editingUser = new User
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            };
+        isEditing = true;
+    }
+
+    private void SaveUserChanges()
+    {
+        LibraryService.EditUser(editingUser);
+        users = LibraryService.GetUsers(); 
+        isEditing = false; // Exit edit mode
+    }
+
+    private void CancelEdit()
+    {
+        isEditing = false; // Exit edit mode without saving
+    }
+
+    private void DeleteUserById()
+    {
+        LibraryService.DeleteUser(userIdToDelete); 
+        users = LibraryService.GetUsers();    
+        userIdToDelete = 0;                        
+    }
+}

@@ -1,0 +1,94 @@
+﻿@page "/borrow-return"
+@inject ILibraryService LibraryService
+@using Lab_5.Models;
+@rendermode InteractiveServer
+
+<h3>Borrow and Return Books</h3>
+
+<!-- Borrow Book Section -->
+<h4>Borrow a Book</h4>
+<div>
+    <label>Select User:</label>
+    <select @bind="selectedUserId">
+        <option value="">Select User</option>
+        @foreach (var user in users)
+        {
+            <option value="@user.Id">@user.Name</option>
+        }
+    </select>
+
+    <label>Select Book:</label>
+    <select @bind="selectedBookId">
+        <option value="">Select Book</option>
+        @foreach (var book in availableBooks)
+        {
+            <option value="@book.Id">@book.Title</option>
+        }
+    </select>
+
+    <button @onclick="BorrowBook">Borrow</button>
+</div>
+
+<!-- Return Book Section -->
+<h4>Return a Book</h4>
+@foreach (var entry in borrowedBooks)
+{
+    <h5>@entry.Key.Name's Borrowed Books</h5>
+    <ul>
+        @foreach (var book in entry.Value)
+        {
+            <li>
+                @book.Title by @book.Author (ISBN: @book.ISBN)
+                <button @onclick="() => ReturnBook(entry.Key.Id, book.Id)">Return</button>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<User> users;
+    private List<Book> availableBooks;
+    private Dictionary<User, List<Book>> borrowedBooks;
+
+    private int selectedUserId;
+    private int selectedBookId;
+
+    protected override void OnInitialized()
+    {
+        // Initialize users, available books, and borrowed books
+        users = LibraryService.GetUsers();
+        availableBooks = LibraryService.GetBooks();
+        borrowedBooks = LibraryService.GetBorrowedBooks();
+    }
+
+    private void BorrowBook()
+    {
+        var user = users.FirstOrDefault(u => u.Id == selectedUserId);
+        var book = availableBooks.FirstOrDefault(b => b.Id == selectedBookId);
+
+        if (user != null && book != null)
+        {
+            LibraryService.BorrowBook(user, book);
+            RefreshData();
+        }
+    }
+
+    private void ReturnBook(int userId, int bookId)
+    {
+        var user = users.FirstOrDefault(u => u.Id == userId);
+        var book = borrowedBooks[user]?.FirstOrDefault(b => b.Id == bookId);
+
+        if (user != null && book != null)
+        {
+            LibraryService.ReturnBook(user, book);
+            RefreshData();
+        }
+    }
+
+    // Refresh the data to update available books and borrowed books
+    private void RefreshData()
+    {
+        availableBooks = LibraryService.GetBooks();
+        borrowedBooks = LibraryService.GetBorrowedBooks();
+    }
+}

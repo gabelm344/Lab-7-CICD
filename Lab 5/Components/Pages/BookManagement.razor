@@ -1,0 +1,141 @@
+﻿@page "/manage-books"
+@inject ILibraryService LibraryService
+@using Lab_5.Models;
+@rendermode InteractiveServer
+
+<!-- Add New Book Form -->
+<h4>Add New Book</h4>
+<div>
+    <input @bind="newBook.Title" placeholder="Title" />
+    <input @bind="newBook.Author" placeholder="Author" />
+    <input @bind="newBook.ISBN" placeholder="ISBN" />
+    <button @onclick="AddBook">Add Book</button>
+</div>
+
+<!-- Delete Book -->
+<h4>Delete a Book by ID</h4>
+<div>
+    <input @bind="bookIdToDelete" placeholder="Enter Book ID" type="number" />
+    <button @onclick="DeleteBookById">Delete Book</button>
+</div>
+
+<!-- Table of Books with Edit Options -->
+<h4>Available Books</h4>
+@if (books != null && books.Count > 0)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books)
+            {
+                <tr>
+                    <td>@book.Id</td>
+                    <td>
+                        @if (isEditing && editingBook.Id == book.Id)
+                        {
+                            <input @bind="editingBook.Title" placeholder="Title" />
+                        }
+                        else
+                        {
+                            @book.Title
+                        }
+                    </td>
+                    <td>
+                        @if (isEditing && editingBook.Id == book.Id)
+                        {
+                            <input @bind="editingBook.Author" placeholder="Author" />
+                        }
+                        else
+                        {
+                            @book.Author
+                        }
+                    </td>
+                    <td>
+                        @if (isEditing && editingBook.Id == book.Id)
+                        {
+                            <input @bind="editingBook.ISBN" placeholder="ISBN" />
+                        }
+                        else
+                        {
+                            @book.ISBN
+                        }
+                    </td>
+                    <td>
+                        @if (isEditing && editingBook.Id == book.Id)
+                        {
+                            <button @onclick="SaveBookChanges">Save</button>
+                            <button @onclick="CancelEdit">Cancel</button>
+                        }
+                        else
+                        {
+                            <button @onclick="() => StartEditBook(book)">Edit</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No books available.</p>
+}
+
+@code {
+    private List<Book> books;
+    private Book newBook = new Book();
+    private Book editingBook = new Book();
+    private bool isEditing = false;
+    private int bookIdToDelete; // Stores the book ID to delete
+
+    protected override void OnInitialized()
+    {
+        books = LibraryService.GetBooks();
+    }
+
+    private void AddBook()
+    {
+        LibraryService.AddBook(newBook);
+        books = LibraryService.GetBooks(); // Refresh the list
+        newBook = new Book(); // Clear form
+    }
+
+    private void StartEditBook(Book book)
+    {
+        editingBook = new Book
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                ISBN = book.ISBN
+            };
+        isEditing = true;
+    }
+
+    private void SaveBookChanges()
+    {
+        LibraryService.EditBook(editingBook);
+        books = LibraryService.GetBooks(); // Refresh the list
+        isEditing = false;
+    }
+
+    private void CancelEdit()
+    {
+        isEditing = false;
+    }
+
+    private void DeleteBookById()
+    {
+        LibraryService.DeleteBook(bookIdToDelete);
+        books = LibraryService.GetBooks();
+        bookIdToDelete = 0;
+    }
+}

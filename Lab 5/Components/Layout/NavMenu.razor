@@ -1,0 +1,37 @@
+﻿<nav>
+    <ul>
+        <li>
+            <NavLink href="/" Match="NavLinkMatch.All">Home</NavLink>
+        </li>
+        <li>
+            <NavLink href="manage-books">Manage Books</NavLink>
+        </li>
+        <li>
+            <NavLink href="manage-users">Manage Users</NavLink>
+        </li>
+        <li>
+            <NavLink href="borrow-return">Borrow & Return Books</NavLink>
+        </li>
+    </ul>
+</nav>
+
+<style>
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        nav ul li {
+            margin-bottom: 1rem;
+        }
+
+            nav ul li a {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+            }
+
+                nav ul li a.active {
+                    color: #007bff; /* Highlight the active link */
+                }
+</style>
